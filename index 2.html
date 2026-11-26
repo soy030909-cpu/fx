@@ -1,0 +1,1873 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>FX Operations Copilot</title>
+    <style>
+:root {
+  font-family: Inter, 'Apple SD Gothic Neo', sans-serif;
+  color: #e6eef4;
+  background: #08121d;
+  font-synthesis: none;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+#app {
+  max-width: 1520px;
+  margin: auto;
+  padding: 28px 30px 60px;
+}
+header {
+  display: flex;
+  gap: 22px;
+  align-items: center;
+  border-bottom: 1px solid #233746;
+  padding-bottom: 26px;
+}
+.logo {
+  font: 800 20px Inter;
+  border: 1px solid #1be3ae;
+  padding: 17px;
+  color: #1be3ae;
+}
+.logo span {
+  font-size: 11px;
+  color: #b6c5d1;
+}
+small,
+.tag,
+.tab,
+h3,
+th,
+footer {
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 1px;
+}
+small {
+  color: #7b9bab;
+  font-size: 10px;
+}
+h1 {
+  margin: 4px 0;
+  font-size: 30px;
+  letter-spacing: -1px;
+}
+h1 em {
+  color: #21e3b0;
+  font-style: normal;
+}
+header p {
+  font:
+    11px 'DM Mono',
+    monospace;
+  color: #7894a4;
+  margin: 0;
+}
+.tag {
+  margin-left: auto;
+  font-size: 10px;
+  color: #25dca9;
+  border: 1px solid #256d61;
+  padding: 12px;
+}
+nav {
+  display: flex;
+  gap: 8px;
+  margin: 28px 0;
+}
+.tab {
+  background: #0e1d2b;
+  border: 1px solid #294050;
+  color: #8fa5b5;
+  padding: 15px 20px;
+  cursor: pointer;
+}
+.tab.active {
+  color: #06231d;
+  background: #25e2b0;
+  border-color: #25e2b0;
+  font-weight: bold;
+}
+.section-head {
+  margin: 24px 0;
+}
+h2 {
+  font-size: 25px;
+  margin: 8px 0;
+}
+p {
+  line-height: 1.6;
+}
+.section-head p,
+.muted,
+.hint {
+  color: #8198a9;
+}
+.section-head p {
+  font-size: 13px;
+}
+.columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.panel {
+  background: #0d1a27;
+  border: 1px solid #273a4b;
+  padding: 22px;
+  margin-bottom: 16px;
+  min-width: 0;
+}
+h3 {
+  font-size: 12px;
+  color: #c8d9e5;
+  margin: 0 0 20px;
+}
+.flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.flex h3 {
+  margin: 0;
+}
+.flex {
+  margin-bottom: 18px;
+}
+#paste,#marPaste,#lateMarPaste,#exampleSheet {
+  min-height: 240px;
+  max-height: 410px;
+  overflow: auto;
+  background: #07131e;
+  border: 1px dashed #3b6570;
+  padding: 16px;
+  color: #d4e4e9;
+  font:
+    12px 'DM Mono',
+    monospace;
+  white-space: pre-wrap;
+  outline: none;
+}
+.sheet-editor,.message-editor{min-height:260px;max-height:440px;overflow:auto;background:#07131e;border:1px dashed #3b6570;padding:16px;color:#d4e4e9;font:12px/1.7 'DM Mono',monospace;white-space:pre-wrap;outline:none;word-break:break-word}.sheet-editor:focus,.message-editor:focus{border-color:#22dfad}.sheet-editor:empty:before,.message-editor:empty:before{content:attr(data-placeholder);color:#567487}.sheet-editor table{border-collapse:collapse;width:max-content;min-width:100%;background:transparent!important;color:#d4e4e9!important}.sheet-editor td,.sheet-editor th{border:1px solid #344655;padding:4px 7px;background:transparent!important;color:#d4e4e9!important;white-space:nowrap}.sheet-editor *{font-family:inherit!important}.message-editor{color:#5fe6c0}.manual-card{padding:16px;border:1px solid #2a4253;margin-top:10px;background:#091925}.manual-card strong{display:block;margin:8px 0}.manual-card p{font-size:12px;color:#9eb2c0;margin:4px 0}.manual-card button{padding:6px 9px;font-size:11px}textarea{display:block;width:100%;background:#07131e;color:#e8f2f7;border:1px solid #2a4253;padding:12px;font:12px/1.7 'DM Mono',monospace;resize:vertical}
+#paste:empty:before,#marPaste:empty:before,#lateMarPaste:empty:before,#exampleSheet:empty:before {
+  content: attr(data-placeholder);
+  color: #567487;
+}
+#paste:focus,#marPaste:focus,#lateMarPaste:focus,#exampleSheet:focus {
+  border-color: #22dfad;
+}
+#paste table,#marPaste table,#lateMarPaste table,#exampleSheet table {
+  border-collapse: collapse;
+  font-size: 11px;
+}
+#paste td,#marPaste td,#lateMarPaste td,#exampleSheet td {
+  border: 1px solid #344655;
+  padding: 3px 6px;
+}
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 14px 0;
+}
+button {
+  cursor: pointer;
+  border: 1px solid #355065;
+  background: #102334;
+  color: #c6d9e5;
+  padding: 11px 14px;
+  font: 600 12px Inter;
+}
+button:hover {
+  border-color: #1be3ae;
+}
+button.primary {
+  background: #1de0ac;
+  color: #05271f;
+  border-color: #1de0ac;
+}
+button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.notice {
+  color: #79a4b4;
+  font-size: 12px;
+  margin-top: 12px;
+}
+.hint {
+  font-size: 11px;
+  line-height: 1.6;
+}
+.check {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 18px;
+  font-size: 13px;
+}
+label {
+  display: block;
+  color: #9eb2c0;
+  font-size: 12px;
+}
+input,
+select {
+  display: block;
+  width: 100%;
+  margin: 8px 0 15px;
+  background: #07131e;
+  color: #e8f2f7;
+  border: 1px solid #2a4253;
+  padding: 12px;
+  font:
+    13px 'DM Mono',
+    monospace;
+  min-width: 0;
+}
+input[type='checkbox'] {
+  width: auto;
+  margin: 0;
+  accent-color: #1be3ae;
+}
+pre {
+  background: #07131e;
+  border: 1px solid #2a4151;
+  padding: 22px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font:
+    13px/1.9 'DM Mono',
+    monospace;
+  color: #5fe6c0;
+  min-height: 200px;
+}
+.scroll {
+  overflow: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+th {
+  text-align: left;
+  color: #8ea5b5;
+  font-size: 10px;
+  border-bottom: 1px solid #375066;
+  padding: 12px 10px;
+  white-space: nowrap;
+}
+td {
+  border-bottom: 1px solid #213646;
+  padding: 12px 10px;
+  white-space: nowrap;
+}
+td button {
+  padding: 5px 8px;
+}
+tr.best {
+  background: #0c302e;
+}
+tr.bad {
+  opacity: 0.48;
+  text-decoration: line-through;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 14px;
+}
+.wide {
+  width: 100%;
+}
+.danger {
+  color: #f28e8e;
+}
+.hidden {
+  display: none;
+}
+footer {
+  border-top: 1px solid #243747;
+  margin-top: 30px;
+  padding-top: 18px;
+  color: #5f8191;
+  font-size: 10px;
+  line-height: 1.8;
+}
+#toast {
+  position: fixed;
+  right: 24px;
+  bottom: 20px;
+  background: #1de0ac;
+  color: #05271f;
+  padding: 12px 18px;
+  display: none;
+  font-size: 13px;
+}
+#quoteOutput[contenteditable]{cursor:text;outline:1px dashed #3b6570;min-height:170px;white-space:pre-wrap}#quoteOutput[contenteditable]:focus{outline:2px solid #21e3b0;background:#071d26}
+.fix-panel{margin-top:18px}.fix-messages{height:205px;overflow:auto;background:#07131e;border:1px solid #2b4555;padding:12px;margin:12px 0;display:flex;flex-direction:column;gap:10px}.fix-bubble{max-width:90%;padding:10px 12px;background:#132638;display:flex;flex-direction:column;gap:5px;white-space:pre-wrap;word-break:break-word;font-size:12px}.fix-bubble strong{font-size:10px;color:#50d9b3}.fix-bubble.user{align-self:flex-end;background:#123c3b}.fix-input{display:flex;gap:10px}.fix-input textarea{flex:1;min-width:0}.fix-input button{min-width:130px}.mar-inner{margin-top:20px;padding:16px;background:#091b29}.mar-inner #marPaste,.mar-inner #lateMarPaste{min-height:145px;max-height:300px}.sheet-editor table td,.sheet-editor table th{background:transparent!important;color:#d4e4e9!important}.sheet-editor *{background-color:transparent!important;color:#d4e4e9!important}
+@media (max-width: 800px) {
+  #app {
+    padding: 15px;
+  }
+  header {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .logo {
+    padding: 10px;
+  }
+  h1 {
+    font-size: 22px;
+  }
+  .tag {
+    margin-left: 0;
+  }
+  nav {
+    overflow-x: auto;
+  }
+  .tab {
+    white-space: nowrap;
+    padding: 12px;
+  }
+  .columns {
+    grid-template-columns: 1fr;
+  }
+  .panel {
+    padding: 14px;
+  }
+  .form-grid {
+    gap: 0 8px;
+  }
+}
+
+    </style>
+</head>
+  <body>
+    <div id="app">
+      <header>
+        <div class="logo">TP<span> / FX</span></div>
+        <div>
+          <small>INDEPENDENT DESK TOOL</small>
+          <h1>FX Operations <em>Copilot</em></h1>
+          <p>QUOTE AGGREGATION · TRADE CONFIRMATION · LOCAL WORKSPACE</p>
+        </div>
+        <div class="tag">BROWSER-ONLY · NO UPLOAD</div>
+      </header>
+      <nav>
+        <button class="tab active" data-tab="quotes">01 / QUOTE BOARD</button
+        ><button class="tab" data-tab="ticket">02 / TRADE TICKET</button
+        ><button class="tab" data-tab="rules">03 / CORRECTION STUDIO</button>
+      </nav>
+      <main>
+        <section id="quotes" class="page">
+          <div class="section-head">
+            <div>
+              <small>01 / QUOTE AGGREGATOR</small>
+              <h2>기관 호가 취합</h2>
+              <p>
+                구글 시트의 A:R 전체 또는 1M~1Y 영역만 복사해 붙여넣으세요.
+                HTML 서식이 전달되면 취소선도 판독합니다.
+              </p>
+            </div>
+          </div>
+          <div class="columns">
+            <div class="panel">
+              <h3>SWAP SHEET · PASTE SHEET DATA</h3>
+              <div
+                id="paste"
+                contenteditable="true"
+                role="textbox"
+                aria-label="시트 데이터 붙여넣기"
+                data-placeholder="여기를 클릭한 후 Ctrl+V / Cmd+V 로 붙여넣기"
+              ></div>
+              <div class="actions">
+                <button class="primary" id="parse">호가 분석하기 →</button
+                ><button id="demo">샘플 데이터</button
+                ><button id="clearPaste">초기화</button>
+              </div>
+              <div class="panel mar-inner"><h3>MATURITY 1 / 다음 거래일 마 · Spot Mar</h3><div id="marPaste" contenteditable="true" role="textbox" aria-label="마거래 시트 붙여넣기" data-placeholder="마거래 구글 시트를 그대로 복사해 붙여넣으세요"></div><div class="actions"><button class="primary" id="parseMar">마거래 분석 →</button><button id="clearMar">마거래 초기화</button></div><div class="notice" id="marStatus">다음 거래일 마거래 시트를 붙여넣으세요.</div></div><div class="panel mar-inner"><h3>MATURITY 2 / 당일 마 · 늦은 마 (메시지 하단)</h3><div id="lateMarPaste" contenteditable="true" role="textbox" aria-label="당일 늦은 마거래 시트 붙여넣기" data-placeholder="당일 늦은 마거래 구글 시트를 복사해 붙여넣으세요"></div><div class="actions"><button class="primary" id="parseLateMar">늦은 마 분석 →</button><button id="clearLateMar">늦은 마 초기화</button></div><div class="notice" id="lateMarStatus">당일 마거래 시트를 붙여넣으세요.</div></div><div class="panel mar-inner"><h3>NONSTANDARD VALUE DATE · val on/off</h3><textarea id="nonstandardPaste" rows="6" placeholder="구글 시트의 6열(날짜, BID 기관, BID 가격, 체결, OFFER 가격, OFFER 기관)을 그대로 복사해 붙여넣으세요."></textarea><p class="hint">날짜·호가·기관별 수량을 자동 추출해 시작일순으로 정렬합니다. 마거래 VALUE 결제일과는 별도입니다.</p><div id="nonstandardStatus" class="notice">비표준일물 시트를 붙여넣으세요.</div></div><div class="notice" id="parseStatus">
+                데이터를 붙여넣으면 분석할 수 있습니다.
+              </div>
+              <label class="check"
+                ><input type="checkbox" id="hideBad" checked /> 취소선(Bad Name)
+                호가 제외</label
+              >
+              <p class="hint">
+                15:30 이후에는 빨간 글씨로 표시된 호가만 자동 선택합니다(색상 정보가 전달된 경우). 색상 정보가 없으면 수동 확인이 필요합니다. 시트 복사 시 취소선이 전달되지 않을 수 있습니다. 아래 분석표에서
+                직접 Bad Name을 지정할 수도 있습니다.
+              </p>
+            </div>
+            <div class="panel">
+              <div class="flex">
+                <h3>TP QUOTE MESSAGE</h3>
+                <button id="copyQuote">메시지 복사</button>
+              </div>
+              <div class="notice">메시지 시각 · <strong id="quoteTimeDisplay">한국시간 자동 입력</strong><input id="quoteTime" type="hidden" value="15:05"/></div>
+              <pre id="quoteOutput" contenteditable="true" role="textbox" aria-label="생성된 TP 메시지 직접 수정" spellcheck="false"> 
+호가를 분석하면 이곳에 공유 메시지가 생성됩니다.</pre
+              >
+              <p class="hint">메시지를 클릭해 바로 수정할 수 있습니다. 수정 후 메시지 복사를 누르면 수정한 내용 그대로 복사됩니다. 다시 분석하면 메시지가 재생성됩니다.</p><p class="hint">
+                Bid = 최대값 / Offer = 최소값 · 취소선 제외 · 수량은 네임에서
+                추출 가능할 때만 표기
+              </p>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="flex">
+              <h3>SELECTED QUOTES & NAME CHECK</h3>
+              <span class="muted" id="quoteCount">0 quotes</span>
+            </div>
+            <div class="scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Tenor</th>
+                    <th>Side</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Size</th>
+                    <th>Bad Name</th>
+                  </tr>
+                </thead>
+                <tbody id="quoteRows">
+                  <tr>
+                    <td colspan="6" class="muted">
+                      아직 분석한 호가가 없습니다.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="panel fix-panel"><div class="flex"><h3>DESK FIX ASSISTANT · 오류 바로 수정</h3><span class="muted" id="fixSaved">0개 수정 규칙 저장</span></div><p class="hint">생성된 메시지가 틀리면 정확한 호가 한 줄을 보내세요. 메시지를 즉시 수정하고 같은 테너의 정정 내용을 이 브라우저에 저장합니다.</p><div id="fixMessages" class="fix-messages" role="log" aria-live="polite"></div><div class="fix-input"><textarea id="fixInput" rows="2" placeholder="예: 2m ? / -225 (ofr s)로 고쳐줘"></textarea><button class="primary" id="fixSend">수정 적용 →</button></div><p class="hint">Enter 전송 · Shift+Enter 줄바꿈 · 되돌리기 · 규칙 초기화. 이 기능은 명확한 정정 명령을 처리하며 앱의 파싱 코드를 스스로 수정하지는 않습니다.</p></div>
+        </section>
+        <section id="ticket" class="page hidden">
+          <div class="section-head">
+            <small>02 / TRADE CONFIRMATION</small>
+            <h2>체결 메시지 생성</h2>
+            <p>
+              구글 시트의 체결 행을 붙여넣으면 거래 정보를 자동 추출하고 최종 메시지를 완성합니다. 발송이나 실제 체결은
+              수행하지 않습니다.
+            </p>
+          </div>
+          <div class="panel" style="margin-bottom:16px"><div class="flex"><h3>STEP 1 / GOOGLE SHEETS · 거래 행 붙여넣기</h3><span class="muted">한 거래 행 전체 복사</span></div><div id="ticketPaste" contenteditable="true" role="textbox" aria-label="체결 시트 한 줄 붙여넣기" data-placeholder="시트에서 체결된 거래의 한 행을 복사한 뒤 여기에 붙여넣으세요" style="min-height:90px;max-height:180px;overflow:auto;background:#07131e;border:1px dashed #3b6570;padding:14px;white-space:pre-wrap;font:12px monospace"></div><div class="actions"><button class="primary" id="parseTicket">붙여넣은 행 다시 분석 ↻</button><button id="ticketDemo">예시 행 불러오기</button><button id="clearTicketPaste">붙여넣기 지우기</button></div><div class="notice" id="ticketParseStatus">구글 시트의 거래 한 행을 붙여넣는 즉시 아래 체결 메시지가 자동 생성됩니다. S/B 방향은 확인 후 수정하세요.</div></div>
+          <div class="columns" id="ticketStages" style="display:none">
+            <form id="ticketForm" class="panel">
+              <h3>STEP 2 / TRADE DETAILS · 시트에서 추출된 값 확인 및 수정</h3>
+              <div class="form-grid">
+                <label
+                  >Tenor<input id="tTenor" value="TN" list="ticketTenors" required/><datalist id="ticketTenors"><option value="TN"></option><option value="ON"></option><option value="SN"></option><option value="1W"></option><option value="2W"></option><option value="1M"></option><option value="2M"></option><option value="3M"></option><option value="6M"></option><option value="9M"></option><option value="1Y"></option><option value="1*2"></option><option value="2*3"></option><option value="2W*1M"></option></datalist></label
+                ><label
+                  >Swap Point<input
+                    id="tPoint"
+                    type="number"
+                    step="any"
+                    value="-3"
+                    required /></label
+                ><label
+                  >Start Date<input id="tStart" type="date" required /></label
+                ><label>End Date<input id="tEnd" type="date" required /></label
+                ><label
+                  >Institution (S/B)<input
+                    id="tA"
+                    value="NHIS"
+                    required /></label
+                ><label
+                  >Counterparty<input id="tB" value="KOOKMIN" required /></label
+                ><label
+                  >Side<select id="tSide">
+                    <option value="S/B">S/B</option>
+                    <option value="B/S">B/S</option>
+                  </select></label
+                ><label
+                  >USD Amount (MIO)<input
+                    id="tAmount"
+                    type="number"
+                    min="0.01"
+                    step="any"
+                    value="100"
+                    required /></label
+                ><label
+                  >Near Rate<input
+                    id="tNear"
+                    type="number"
+                    step="any"
+                    value="1336.20"
+                    required /></label
+                ><label
+                  >Far Rate<input
+                    id="tFar"
+                    type="number"
+                    step="any"
+                    value="1336.17"
+                    required /></label
+                ><label
+                  >첫 번째 기관 Fee (KRW)<input
+                    id="tFee"
+                    type="number"
+                    min="0"
+                    step="1"
+                    value="150000"
+                    required
+                /></label><label>첫 번째 기관 수수료 통화<select id="tFeeCurrency"><option value="KRW">KRW (원)</option><option value="USD">USD (달러)</option></select></label><label>반대편 기관 Fee<input id="tOppositeFee" type="number" min="0" step="1" value="150000" required /></label><label>반대편 기관 수수료 통화<select id="tOppositeFeeCurrency"><option value="KRW">KRW (원)</option><option value="USD">USD (달러)</option></select></label>
+              </div>
+              <div class="actions">
+                <button type="submit" class="primary">메시지 생성 →</button
+                ><button type="button" id="resetTicket">입력값 초기화</button>
+              </div>
+              <div id="ticketStatus" class="notice">
+                기간과 환율을 확인한 뒤 생성하세요.
+              </div>
+            </form>
+            <div class="panel">
+              <div class="flex">
+                <h3>STEP 3 / FINAL CONFIRMATION · 자동 완성 메시지</h3>
+                <button id="copyTicket">메시지 복사</button>
+              </div>
+              <pre id="ticketOutput">
+체결 정보를 입력한 뒤 '메시지 생성'을 눌러 주세요.</pre
+              >
+              
+<div class="flex" style="margin-top:20px"><h3>COUNTERPARTY B / 반대편 기관 메시지</h3><button type="button" id="copyTicketOpposite">반대편 메시지 복사</button></div><pre id="ticketOutputOpposite">거래 행을 붙여넣으면 반대편 기관 메시지가 표시됩니다.</pre>
+              <p class="hint">
+                수수료는 입력값을 그대로 사용합니다. 자동 계산하거나 실제 거래
+                사실을 검증하지 않습니다.
+              </p>
+            </div>
+          </div>
+        </section>
+        <section id="rules" class="page hidden"><div class="section-head"><small>03 / USER CORRECTIONS</small><h2>Correction Studio</h2><p>왼쪽에는 원본 구글 시트, 오른쪽에는 정확한 TP 메시지를 넣으세요. 확인된 표기법을 데스크 매뉴얼로 축적할 수 있습니다.</p></div><div class="columns"><div class="panel"><h3>STEP 1 / GOOGLE SHEET · 원본 시트 붙여넣기</h3><div id="exampleSheet" class="sheet-editor" contenteditable="true" role="textbox" aria-label="정답 예시 원본 시트 붙여넣기" data-placeholder="구글 시트의 셀 범위를 그대로 복사해 붙여넣으세요"></div></div><div class="panel"><h3>STEP 2 / CORRECT MESSAGE · 정확한 최종 메시지</h3><div id="exampleAnswer" class="message-editor" contenteditable="true" role="textbox" aria-label="정확한 TP 메시지 붙여넣기" data-placeholder="정확한 TP 호가 메시지를 입력하거나 붙여넣으세요"></div></div></div><div class="panel"><button class="primary" id="saveExample">원본 + 정답 예시 저장</button><div class="notice" id="exampleStatus">동일한 시트를 다시 분석할 때 저장한 정답 메시지를 사용합니다. 데이터는 이 브라우저에만 저장됩니다.</div></div><div class="panel"><div class="flex"><h3>DESK MESSAGE MANUAL · 누적 작성 규칙</h3><span class="muted" id="manualCount"></span></div><p class="hint">원본과 정답 메시지에서 확인되는 표기 규칙을 제안합니다. 추론된 규칙은 승인 전까지 실제 메시지 생성에 자동 적용되지 않습니다.</p><div id="manualList"></div><div id="exampleList" style="display:none"></div></div><div class="panel"><h3>매뉴얼 직접 추가</h3><div class="form-grid"><label>분류<select id="manualCategory"><option>메시지 순서</option><option>비표준일물</option><option>테너 표기</option><option>수량 표기</option><option>기관명</option><option>기타</option></select></label><label>규칙 제목<input id="manualTitle" placeholder="예: 비표준일물 우선 배치"/></label></div><label>규칙 설명<textarea id="manualDetail" rows="3" placeholder="(날짜) val on/off로 쓰고 표준일물보다 위에 배치"></textarea></label><div class="actions"><button id="addManual" class="primary">매뉴얼에 추가</button></div></div></section>
+        <section id="log" class="page hidden" style="display:none">
+          <div class="section-head">
+            <small>03 / TRADE LOG</small>
+            <h2>체결 기록</h2>
+            <p>
+              이 브라우저에만 저장된 확인 메시지를 조회하고 CSV로 내보낼 수
+              있습니다.
+            </p>
+          </div>
+          <div class="panel">
+            <div class="flex">
+              <h3>LOCAL RECORDS</h3>
+              <div class="actions">
+                <button id="exportCsv">CSV 내보내기</button
+                ><button id="clearLog" class="danger">전체 삭제</button>
+              </div>
+            </div>
+            <div class="scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Saved</th>
+                    <th>Tenor</th>
+                    <th>Institutions</th>
+                    <th>USD MIO</th>
+                    <th>Point</th>
+                    <th>Fee</th>
+                    <th>Message</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="logRows"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </main>
+      <footer>
+        교육·업무 보조용 · 공개 또는 사내 승인된 데이터만 사용하세요. 실제
+        거래상대방·비공개 호가의 외부 웹사이트 입력은 회사 정책을 먼저
+        확인하세요.
+      </footer>
+      <div id="toast" aria-live="polite"></div>
+    </div>
+    <script>
+const safeStore=(name)=>{let real=null;try{real=window[name];const k='__fx_probe__';real.setItem(k,'1');real.removeItem(k);}catch{real=null}const mem={};return{getItem:(k)=>{try{if(real)return real.getItem(k)}catch{}return k in mem?mem[k]:null},setItem:(k,v)=>{mem[k]=String(v);try{if(real)real.setItem(k,String(v))}catch{}},removeItem:(k)=>{delete mem[k];try{if(real)real.removeItem(k)}catch{}}}};
+const LS=safeStore('localStorage'),SS=safeStore('sessionStorage');
+let quotes = [], ticketText = '', ticketData = {};
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+const fmt = (n) => (Number.isInteger(n) ? String(n) : String(n));
+function toast(s) {
+    $('toast').textContent = s;
+    $('toast').style.display = 'block';
+    setTimeout(() => ($('toast').style.display = 'none'), 2400);
+}
+document.querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click', () => {
+    document
+        .querySelectorAll('[data-tab]')
+        .forEach(n => n.classList.toggle('active', n === b));
+    document
+        .querySelectorAll('.page')
+        .forEach(p => p.classList.toggle('hidden', p.id !== b.dataset.tab));
+}));
+const tenors = [
+    '내일마',
+    'O/N',
+    'T/N',
+    'S/N',
+    '1W',
+    '2W',
+    '3W',
+    '3W*1M',
+    '1M',
+    '2M',
+    '3M',
+    '6M',
+    '9M',
+    '1Y',
+    '1*2',
+    '2*3',
+    '1*3',
+    '1*6',
+    '6*12',
+    '9*12',
+];
+const norm = (s) => {
+    const raw = s.toUpperCase().replace(/\s+/g, '').replace(/０/g, '0');
+    const t = raw.replace(/\([^)]*\)/g, '').replace(/\[[^\]]*\]/g, '');
+    if (['ON', 'O/N'].includes(t))
+        return 'O/N';
+    if (['TN', 'T/N'].includes(t))
+        return 'T/N';
+    if (['SN', 'S/N'].includes(t))
+        return 'S/N';
+    if (/^(?:\d+[DWMY])(?:\*\d+[DWMY])?$/.test(t))
+        return t;
+    return tenors.find(x => x.toUpperCase() === t) || '';
+};
+const tenorSuffix = (s) => {
+    const m = s.match(/\[(\d+)\]/);
+    return m ? '[' + m[1] + 'd]' : '';
+};
+function badCell(el) {
+    return (!!el.querySelector('s,strike,del,[style*="line-through"]') ||
+        getComputedStyle(el).textDecorationLine.includes('line-through') ||
+        el.getAttribute('style')?.includes('line-through') ||
+        false);
+}
+function getHtmlRows() {
+    const table = $('paste').querySelector('table');
+    if (!table)
+        return null;
+    return Array.from(table.querySelectorAll('tr')).map(tr => Array.from(tr.children)
+        .filter(x => x.tagName === 'TD' || x.tagName === 'TH')
+        .flatMap(c => Array.from({ length: Math.max(1, Number(c.getAttribute('colspan') || 1)) }, (_, i) => ({
+        text: i === 0 ? (c.textContent || '').trim() : '',
+        bad: badCell(c),
+    }))));
+}
+function getTextRows() {
+    const t = $('paste').innerText || '';
+    return t
+        .split(/\r?\n/)
+        .filter(Boolean)
+        .map(line => line.split('\t').map(text => ({ text: text.trim(), bad: false })));
+}
+function parsePrice(s) {
+    const t = s.replace(/,/g, '').trim();
+    if (!/^[-+]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(t))
+        return null;
+    const v = Number(t);
+    return Number.isFinite(v) ? v : null;
+}
+function legacyExtractSize(s) {
+    const m = s.match(/(?:^|[^\d])(\d+(?:\.\d+)?)\s*(?:mio|m|백만|억)?\s*$/i);
+    return m ? m[1] : '';
+}
+function legacyParseRows() {
+    const rows = getHtmlRows() || getTextRows();
+    const out = [];
+    let current = ['', '', ''];
+    let id = 0;
+    const wide = rows.some(r => r.length >= 15);
+    for (const row of rows) {
+        if (wide) {
+            const groups = [
+                { ten: 0, bn: 1, bp: 2, on: 5, op: 4 },
+                { ten: 6, bn: 7, bp: 8, on: 11, op: 10 },
+                { ten: 12, bn: 13, bp: 14, on: 17, op: 16 },
+            ];
+            for (let gi = 0; gi < 3; gi++) {
+                const g = groups[gi], cell = (i) => row[i] || { text: '', bad: false };
+                const label = norm(cell(g.ten).text);
+                if (label)
+                    current[gi] = label;
+                const tenor = current[gi];
+                if (!tenor)
+                    continue;
+                for (const [side, n, p] of [
+                    ['bid', g.bn, g.bp],
+                    ['offer', g.on, g.op],
+                ]) {
+                    const price = parsePrice(cell(p).text), name = cell(n).text;
+                    if (price === null || !name || name === '#N/A')
+                        continue;
+                    out.push({
+                        id: id++,
+                        tenor,
+                        side,
+                        name,
+                        price,
+                        size: extractSize(name),
+                        bad: cell(n).bad || cell(p).bad,
+                    });
+                }
+            }
+        }
+        else {
+            for (const rowItem of [row]) {
+                const cell = (i) => rowItem[i] || { text: '', bad: false };
+                const tenor = norm(cell(0).text) || current[0];
+                if (norm(cell(0).text))
+                    current[0] = tenor;
+                for (const [side, n, p] of [
+                    ['bid', 1, 2],
+                    ['offer', 5, 4],
+                ]) {
+                    const price = parsePrice(cell(p).text), name = cell(n).text;
+                    if (tenor && price !== null && name && name !== '#N/A')
+                        out.push({
+                            id: id++,
+                            tenor,
+                            side,
+                            name,
+                            price,
+                            size: extractSize(name),
+                            bad: cell(n).bad || cell(p).bad,
+                        });
+                }
+            }
+        }
+    }
+    return out;
+}
+function selections() {
+    const result = new Map();
+    const now = kstNow(), afterClose = now.hour > 15 || (now.hour === 15 && now.minute >= 30);
+    const closeMode = afterClose;
+    // At close, red text marks the active quote. Unmarked sides are unknown, not guessed.
+    // Never infer red status from prices when clipboard formatting was lost.
+    const summaryTenors = new Set(quotes.filter(q => q.summary).map(q => q.tenor));
+    for (const q of quotes) {
+        if ($('hideBad').checked && q.bad)
+            continue;
+        if (closeMode) {
+            if (!q.red)
+                continue;
+        }
+        else if (summaryTenors.has(q.tenor) && !q.summary)
+            continue;
+        const k = q.tenor + '|' + q.side, prev = result.get(k);
+        if (!prev ||
+            (q.side === 'bid' ? q.price > prev.price : q.price < prev.price) ||
+            (q.price === prev.price && Number(q.size || 0) > Number(prev.size || 0)))
+            result.set(k, q);
+    }
+    return result;
+}
+function legacyRenderQuotes() {
+    const selected = selections();
+    $('quoteCount').textContent =
+        quotes.length +
+            ' quotes · ' +
+            quotes.filter(q => q.bad).length +
+            ' bad names';
+    $('quoteRows').innerHTML = quotes.length
+        ? quotes
+            .map(q => {
+            const best = selected.get(q.tenor + '|' + q.side)?.id === q.id;
+            return ('<tr class="' +
+                (q.bad ? 'bad ' : '') +
+                (best ? 'best' : '') +
+                '"><td>' +
+                esc(q.tenor) +
+                '</td><td>' +
+                q.side.toUpperCase() +
+                '</td><td>' +
+                esc(q.name) +
+                '</td><td>' +
+                fmt(q.price) +
+                '</td><td>' +
+                esc(q.size || '—') +
+                '</td><td><input aria-label="Bad Name ' +
+                esc(q.name) +
+                '" type="checkbox" data-bad="' +
+                q.id +
+                '" ' +
+                (q.bad ? 'checked' : '') +
+                '></td></tr>');
+        })
+            .join('')
+        : '<tr><td colspan="6" class="muted">유효한 호가가 없습니다.</td></tr>';
+    const lines = [
+        '(' +
+            $('quoteTime').value.replace(':', ' : ') +
+            ' TP)',
+        '',
+        '   - USD -',
+        '',
+    ];
+    for (const ten of tenors) {
+        const b = selected.get(ten + '|bid'), o = selected.get(ten + '|offer');
+        if (!b && !o)
+            continue;
+        const sizes = b?.size || o?.size
+            ? ' (' + (b?.size || 's') + '/' + (o?.size || 's') + ')'
+            : '';
+        lines.push(ten.toLowerCase().padEnd(6) +
+            ' ' +
+            (b ? fmt(b.price) : '?') +
+            ' / ' +
+            (o ? fmt(o.price) : '?') +
+            sizes);
+    }
+    const match = trainingExamples().find(x => x.source === quotePasteSignature());
+    $('quoteOutput').textContent = match ? match.answer : (lines.length > 4 ? lines.join('\n') : '분석 가능한 호가가 없습니다.');
+}
+function redCell(el) {
+    const parts = [el, ...Array.from(el.querySelectorAll('*'))];
+    return parts.some(node => {
+        const color = node.style?.color || node.getAttribute('color') || getComputedStyle(node).color || '';
+        const hex = color.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+        let rgb = [];
+        if (hex) {
+            const x = hex[1].length === 3 ? hex[1].split('').map(v => v + v).join('') : hex[1];
+            rgb = [0, 2, 4].map(i => parseInt(x.slice(i, i + 2), 16));
+        }
+        else {
+            const m = color.match(/rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)/i);
+            if (m)
+                rgb = [+m[1], +m[2], +m[3]];
+        }
+        return rgb.length === 3 && rgb[0] >= 145 && rgb[0] > rgb[1] * 1.65 && rgb[0] > rgb[2] * 1.65;
+    });
+}
+function quoteRowsFromPaste() {
+    const root = $('paste'), table = root.querySelector('table');
+    if (table) {
+        const grid = [];
+        Array.from(table.querySelectorAll('tr')).forEach((tr, ri) => {
+            grid[ri] ?? (grid[ri] = []);
+            let ci = 0;
+            Array.from(tr.children).filter(c => /^(TD|TH)$/.test(c.tagName)).forEach(c => {
+                var _a;
+                while (grid[ri][ci])
+                    ci++;
+                const colspan = Math.max(1, Number(c.getAttribute('colspan') || 1)), rowspan = Math.max(1, Number(c.getAttribute('rowspan') || 1));
+                const el = c, txt = (c.textContent || '').trim(), bad = badCell(el), red = redCell(el);
+                for (let y = 0; y < rowspan; y++) {
+                    grid[_a = ri + y] ?? (grid[_a] = []);
+                    for (let x = 0; x < colspan; x++)
+                        grid[ri + y][ci + x] = { text: x === 0 && y === 0 ? txt : '', bad, red };
+                }
+                ci += colspan;
+            });
+        });
+        return grid;
+    }
+    const raw = root.innerText || root.textContent || '';
+    return raw.split(/\r?\n/).filter(x => x.trim()).map(line => {
+        const parts = line.includes('\t') ? line.split('\t') : line.trim().startsWith('|') ? line.trim().replace(/^\|/, '').replace(/\|$/, '').split('|') : [line];
+        return parts.map(s => ({ text: s.trim().replace(/^\*\*(.*?)\*\*$/, '$1'), bad: /~~.*~~/.test(s), red: false }));
+    }).filter(row => !row.every(c => /^:?-{3,}:?$/.test(c.text) || !c.text));
+}
+let embeddedNonstandard = [];
+function parseRows() {
+    const rows = quoteRowsFromPaste(), out = [];
+    embeddedNonstandard = [];
+    let id = 0;
+    const max = Math.max(0, ...rows.map(r => r.length));
+    const groups = max > 12 ? [0, 6, 12] : max > 6 ? [0, 6] : [0];
+    const active = groups.map(() => '');
+    const suffix = groups.map(() => '');
+    const lastSummary = new Map();
+    let scanTenor = groups.map(() => '');
+    for (let ri = 0; ri < rows.length; ri++)
+        for (let gi = 0; gi < groups.length; gi++) {
+            const v = rows[ri]?.[groups[gi]]?.text?.trim() || '';
+            const detected = norm(v);
+            if (detected)
+                scanTenor[gi] = detected + tenorSuffix(v);
+            else if (/^\d{1,2}\/\d{1,2}$/.test(v) && scanTenor[gi])
+                lastSummary.set(scanTenor[gi], ri);
+        }
+    let ri = -1;
+    for (const row of rows) {
+        ri++;
+        for (let gi = 0; gi < groups.length; gi++) {
+            const base = groups[gi], cell = (n) => row[base + n] || { text: '', bad: false, red: false };
+            const rawLabel = cell(0).text, detected = norm(rawLabel);
+            if (detected) {
+                active[gi] = detected;
+                suffix[gi] = tenorSuffix(rawLabel);
+            }
+            // A plain date after the final 2W summary starts an embedded on/off quote.
+            // Settlement summary rows elsewhere must never be interpreted as on/off.
+            const date = nonstandardDate(rawLabel);
+            const bidName = cell(1).text.trim(), offerName = cell(5).text.trim();
+            // A settlement/maturity date following 2W (e.g. 12/7 for 2W (11/23, 12/7))
+            // is NOT an on/off trade. Require an explicit on/off label or date range.
+            const explicitOnOff = /on\s*[,/]?\s*off|onoff|val\s*on/i.test(rawLabel);
+            const explicitRange = /^\d{1,2}\/\d{1,2}\s*[~\-]\s*\d{1,2}$/.test(rawLabel.trim());
+            if (date && (explicitOnOff || explicitRange)) {
+                embeddedNonstandard.push(Array.from({ length: 6 }, (_, i) => cell(i)));
+                continue;
+            }
+            const tenor = active[gi];
+            if (!tenor)
+                continue;
+            const isSummary = ri === lastSummary.get(tenor + suffix[gi]) && /^\d{1,2}\/\d{1,2}$/.test(rawLabel);
+            if (/^\d{1,2}\/\d{1,2}$/.test(rawLabel) && !isSummary)
+                continue;
+            if (/^#N\/A$/i.test(cell(1).text) || /^#N\/A$/i.test(cell(5).text))
+                continue;
+            for (const [side, n, p] of [['bid', 1, 2], ['offer', 5, 4]]) {
+                const name = cell(n).text, price = parsePrice(cell(p).text);
+                if (!name || price === null || name === '#N/A')
+                    continue;
+                out.push({ id: id++, tenor: tenor + suffix[gi], side, name, price, size: extractSize(name, tenor + suffix[gi]), bad: cell(n).bad || cell(p).bad, red: !!(cell(n).red || cell(p).red), summary: isSummary });
+            }
+        }
+    }
+    return out;
+}
+function regularSize(tenor) {
+    const t = tenor.toUpperCase().replace(/^DF\s+/, '').split('*')[0].replace(/\[.*$/, '');
+    if (/^(?:O\/N|T\/N|S\/N|\d+D|[12]W)$/.test(t))
+        return 100;
+    if (/^\d+W$/.test(t))
+        return 50; // 3W and other intermediate dates: provisional 1M band
+    const m = t.match(/^(\d+)([MY])$/);
+    if (m) {
+        const months = Number(m[1]) * (m[2] === 'Y' ? 12 : 1);
+        return months >= 6 ? 10 : months >= 1 ? 50 : 100;
+    }
+    return 100;
+}
+function extractSize(s, tenor = '') {
+    // Explicit numeric-only quote names MUST retain their numeric size, even
+    // if that number happens to equal or exceed the regular-size threshold.
+    // A bare institution name means regular; an 's' name means small.
+    const clean = s.trim().replace(/\([^)]*\)/g, '').trim();
+    if (!clean)
+        return '';
+    const parts = clean.split(/[\s,;]+|\s*(?:\+|&|\/|\bor\b)\s*/i).filter(Boolean);
+    const sizes = parts.map(part => {
+        const num = part.match(/(\d+(?:\.\d+)?)\s*(?:mio|m|백만)?$/i);
+        if (num)
+            return num[1];
+        if (/[sｓ]$/i.test(part))
+            return 's';
+        return '';
+    });
+    // A regular (unmarked) institution on the same side takes precedence.
+    if (sizes.some(x => x === ''))
+        return '';
+    // An explicit small institution takes precedence over numeric-only names.
+    if (sizes.includes('s'))
+        return 's';
+    const amount = sizes.reduce((a, b) => a + Number(b), 0);
+    return sizes.length ? String(amount) : '';
+}
+let marQuotes = [], marDate = '';
+let lateMarQuotes = [], lateMarDate = '';
+function kstNow() { const p = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date()); const v = (x) => p.find(a => a.type === x)?.value || ''; return { date: v('year') + '-' + v('month') + '-' + v('day'), hour: Number(v('hour')), minute: Number(v('minute')) }; }
+function marDateValue(s) {
+    const t = s.trim(), m = t.match(/(\d{1,2})[-\/. ]([A-Za-z]{3}|\d{1,2})[-\/. ](\d{4})/);
+    if (m) {
+        const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+        const mm = /^\d+$/.test(m[2]) ? Number(m[2]) : months.indexOf(m[2].toUpperCase()) + 1;
+        return mm > 0 && mm < 13 ? m[3] + '-' + String(mm).padStart(2, '0') + '-' + m[1].padStart(2, '0') : '';
+    }
+    return /^\d{4}-\d{2}-\d{2}$/.test(t) ? t : '';
+}
+function marGrid(inputId) {
+    const root = $(inputId), table = root.querySelector('table');
+    if (!table)
+        return (root.innerText || '').split(/\r?\n/).map(l => l.split('\t').map(t => ({ text: t.trim(), bad: false })));
+    const grid = [];
+    Array.from(table.querySelectorAll('tr')).forEach((tr, ri) => {
+        grid[ri] ?? (grid[ri] = []);
+        let ci = 0;
+        Array.from(tr.children).filter(c => /^(TD|TH)$/.test(c.tagName)).forEach(c => {
+            var _a;
+            while (grid[ri][ci])
+                ci++;
+            const span = Math.max(1, Number(c.getAttribute('colspan') || 1)), rows = Math.max(1, Number(c.getAttribute('rowspan') || 1));
+            for (let y = 0; y < rows; y++) {
+                grid[_a = ri + y] ?? (grid[_a] = []);
+                for (let x = 0; x < span; x++)
+                    grid[ri + y][ci + x] = { text: x === 0 && y === 0 ? (c.textContent || '').trim() : '', bad: badCell(c) };
+            }
+            ci += span;
+        });
+    });
+    return grid;
+}
+function parseMar() {
+    const rows = marGrid('marPaste');
+    marQuotes = [];
+    marDate = '';
+    for (const row of rows)
+        for (const cell of row) {
+            const d = marDateValue(cell.text);
+            if (d && !marDate)
+                marDate = d;
+        }
+    // Maturity sheet layout: value | bid name | bid price | bid qty | offer price | offer name | offer qty
+    // Some pasted sheets have merged title rows. Only rows with both a name and a numeric quote are counted.
+    for (const row of rows) {
+        const cells = row.map(c => c || { text: '', bad: false });
+        const candidates = [['bid', 1, 2], ['offer', 5, 4]];
+        for (const [side, n, p] of candidates) {
+            const name = cells[n]?.text?.trim() || '', price = parsePrice(cells[p]?.text || '');
+            if (!name || price === null || /^(?:#N\/A|name|bid|offer|수량)$/i.test(name))
+                continue;
+            marQuotes.push({ side, name, price, bad: !!(cells[n]?.bad || cells[p]?.bad) });
+        }
+    }
+    $('marStatus').textContent = marQuotes.length + '개 마 호가 감지' + (marDate ? ' · Spot Value ' + marDate + ' · 거래일 ' + businessDayShift(marDate, -2) : ' · Value 날짜 미확인') + ' · 결제일 T+2 기준(주말 제외, 공휴일 별도 확인) · 취소선/기관명을 확인하세요.';
+    renderQuotes();
+}
+function nextBusinessDate(d) { const dt = new Date(d + 'T12:00:00Z'); do {
+    dt.setUTCDate(dt.getUTCDate() + 1);
+} while (dt.getUTCDay() === 0 || dt.getUTCDay() === 6); return dt.toISOString().slice(0, 10); }
+function businessDayShift(date, days) { const dt = new Date(date + 'T12:00:00Z'); let left = Math.abs(days); while (left > 0) {
+    dt.setUTCDate(dt.getUTCDate() + (days < 0 ? -1 : 1));
+    if (dt.getUTCDay() !== 0 && dt.getUTCDay() !== 6)
+        left--;
+} return dt.toISOString().slice(0, 10); }
+function marLabelFor(valueDate) {
+    const now = kstNow();
+    if (!valueDate)
+        return '마 (결제일 확인 필요)';
+    // Sheet VALUE is spot settlement (T+2), not the maturity trade date.
+    const tradeDate = businessDayShift(valueDate, -2);
+    const afterClose = now.hour > 15 || (now.hour === 15 && now.minute >= 30);
+    if (tradeDate === now.date)
+        return now.hour < 9 ? 'Spot Mar' : '늦은 마';
+    if (tradeDate === nextBusinessDate(now.date)) {
+        if (afterClose)
+            return 'Spot Mar';
+        const weekday = new Date(tradeDate + 'T12:00:00Z').getUTCDay();
+        return weekday === 1 ? '월요일 마' : '내일 마';
+    }
+    const [, m, d] = tradeDate.split('-');
+    return '(' + Number(m) + '/' + Number(d) + ') 마';
+}
+function marLabel() {
+    const now = kstNow();
+    if (now.hour > 15 || (now.hour === 15 && now.minute >= 30))
+        return 'Spot Mar';
+    const next = nextBusinessDate(now.date);
+    return new Date(next + 'T12:00:00Z').getUTCDay() === 1 ? '월요일 마' : '내일 마';
+}
+function renderMarLine() {
+    const filtered = marQuotes.filter(q => !$('hideBad').checked || !q.bad);
+    const bids = filtered.filter(q => q.side === 'bid').sort((a, b) => b.price - a.price);
+    const offers = filtered.filter(q => q.side === 'offer').sort((a, b) => a.price - b.price);
+    if (!bids.length && !offers.length)
+        return '';
+    const show = (q) => q ? (q.price === 0 ? 'par' : fmt(q.price)) : '?';
+    return marLabel() + '  ' + show(bids[0]) + ' / ' + show(offers[0]);
+}
+$('parseMar').addEventListener('click', parseMar);
+$('clearMar').addEventListener('click', () => { $('marPaste').innerHTML = ''; marQuotes = []; marDate = ''; $('marStatus').textContent = '마거래 시트를 붙여넣으세요.'; renderQuotes(); });
+function parseLateMar() {
+    const rows = marGrid('lateMarPaste');
+    lateMarQuotes = [];
+    lateMarDate = '';
+    for (const row of rows)
+        for (const cell of row) {
+            const d = marDateValue(cell.text);
+            if (d && !lateMarDate)
+                lateMarDate = d;
+        }
+    for (const row of rows) {
+        const cells = row.map(c => c || { text: '', bad: false });
+        for (const [side, n, p] of [['bid', 1, 2], ['offer', 5, 4]]) {
+            const name = cells[n]?.text?.trim() || '', price = parsePrice(cells[p]?.text || '');
+            if (!name || price === null || /^(?:#N\/A|name|bid|offer|수량)$/i.test(name))
+                continue;
+            lateMarQuotes.push({ side, name, price, bad: !!(cells[n]?.bad || cells[p]?.bad) });
+        }
+    }
+    $('lateMarStatus').textContent = lateMarQuotes.length + '개 당일 마 호가 감지' + (lateMarDate ? ' · Value ' + lateMarDate : '') + ' · 메시지 맨 아래에 배치됩니다.';
+    renderQuotes();
+}
+$('parseLateMar').addEventListener('click', parseLateMar);
+$('clearLateMar').addEventListener('click', () => { $('lateMarPaste').innerHTML = ''; lateMarQuotes = []; lateMarDate = ''; $('lateMarStatus').textContent = '당일 마거래 시트를 붙여넣으세요.'; renderQuotes(); });
+function renderLateMarLine() {
+    const filtered = lateMarQuotes.filter(q => !$('hideBad').checked || !q.bad);
+    const bids = filtered.filter(q => q.side === 'bid').sort((a, b) => b.price - a.price), offers = filtered.filter(q => q.side === 'offer').sort((a, b) => a.price - b.price);
+    const show = (q) => q ? (q.price === 0 ? 'par' : fmt(q.price)) : '?';
+    const label = marLabelFor(lateMarDate);
+    return bids.length || offers.length ? label + '  ' + show(bids[0]) + ' / ' + show(offers[0]) : '';
+}
+function nonstandardDate(raw) {
+    const s = raw.trim().replace(/\s*(?:on\s*[,/]?\s*off|onoff|val\s*on\s*[,/]?\s*off)\s*/ig, '').trim();
+    let m = s.match(/^(\d{1,2})\/(\d{1,2})\s*[~\-]\s*(\d{1,2})$/);
+    if (m) {
+        const month = +m[1], day = +m[2];
+        if (month < 1 || month > 12 || day < 1 || day > 31)
+            return null;
+        return { label: month + '/' + day + '~' + Number(m[3]), sort: month * 100 + day };
+    }
+    m = s.match(/^(\d{1,2})\/(\d{1,2})$/);
+    if (m) {
+        const month = +m[1], day = +m[2];
+        if (month < 1 || month > 12 || day < 1 || day > 31)
+            return null;
+        return { label: month + '/' + day, sort: month * 100 + day };
+    }
+    m = s.match(/^((?:\d{1,2}\s*,\s*)+\d{1,2})\/(\d{1,2})$/);
+    if (m) {
+        const days = m[1].split(',').map(Number), month = +m[2];
+        if (month < 1 || month > 12 || days.some(d => d < 1 || d > 31))
+            return null;
+        return { label: month + '/' + days.join(','), sort: month * 100 + Math.min(...days) };
+    }
+    return null;
+}
+function parseNonstandardSheet(input) {
+    const rows = input.split(/\r?\n/).map(s => s.split('\t').map(x => x.trim()));
+    return parseNonstandardRows(rows);
+}
+function parseNonstandardRows(rows) {
+    const out = [], errors = [];
+    for (const row of rows) {
+        if (!row.some(Boolean))
+            continue;
+        const label = (row[0] || '').trim().toUpperCase().replace(/\s+/g, '');
+        const specialTenor = /^(?:\d+[DWMY])(?:\*\d+[DWMY])?$/.test(label) ? label : '';
+        const date = specialTenor ? { label: specialTenor.toLowerCase(), sort: 0 } : nonstandardDate(row[0] || '');
+        if (!date) {
+            errors.push(row[0] || '날짜 없음');
+            continue;
+        }
+        const bid = parsePrice(row[2] || ''), offer = parsePrice(row[4] || '');
+        const bidName = row[1] || '', offerName = row[5] || '';
+        const bidSize = bid !== null ? extractSize(bidName, specialTenor) : '';
+        const offerSize = offer !== null ? extractSize(offerName, specialTenor) : '';
+        if (bid === null && offer === null) {
+            errors.push(date.label + ' (호가 없음)');
+            continue;
+        }
+        out.push({ ...date, bid, offer, bidSize, offerSize });
+    }
+    out.sort((a, b) => a.sort - b.sort);
+    const format = (v) => v === null ? '?' : v === 0 ? 'par' : v > 0 ? '+' + fmt(v) : fmt(v);
+    const sizeNote = (q) => {
+        const b = q.bidSize, o = q.offerSize;
+        if (b && o)
+            return ' (' + b + '/' + o + ')';
+        if (b)
+            return ' (bid ' + b + ')';
+        if (o)
+            return ' (ofr ' + o + ')';
+        return '';
+    };
+    return { lines: out.map(q => q.label + (/^(?:\d+[dwmy])(?:\*\d+[dwmy])?$/.test(q.label) ? '  ' : ' val on,off  ') + format(q.bid) + ' / ' + format(q.offer) + sizeNote(q)), errors };
+}
+function renderQuotes() {
+    const selected = selections();
+    const now = kstNow(), afterClose = now.hour > 15 || (now.hour === 15 && now.minute >= 30);
+    const redCount = quotes.filter(q => q.red).length;
+    const hasRed = redCount > 0;
+    $('parseStatus').textContent = afterClose ? (hasRed ? '15:30 이후 · 빨간색 호가 ' + redCount + '개 인식 · 빨간색만 선택합니다.' : '15:30 이후 · 빨간색 서식이 감지되지 않았습니다. 시트 복사 시 글자색이 전달됐는지 확인하세요. 일반 호가로 자동 대체하지 않습니다.') : '장중 · Bid 최고 / Offer 최저 호가를 선택합니다.';
+    $('quoteCount').textContent = quotes.length + ' quotes · ' + quotes.filter(q => q.bad).length + ' bad names';
+    $('quoteRows').innerHTML = quotes.length ? quotes.map(q => {
+        const best = selected.get(q.tenor + '|' + q.side)?.id === q.id;
+        return '<tr class="' + (q.bad ? 'bad ' : '') + (best ? 'best' : '') + '"><td>' + esc(q.tenor) + '</td><td>' + q.side.toUpperCase() + '</td><td>' + esc(q.name) + '</td><td>' + fmt(q.price) + '</td><td>' + esc(q.size || '—') + '</td><td><input aria-label="Bad Name ' + esc(q.name) + '" type="checkbox" data-bad="' + q.id + '" ' + (q.bad ? 'checked' : '') + '></td></tr>';
+    }).join('') : '<tr><td colspan="6" class="muted">유효한 호가가 없습니다.</td></tr>';
+    const lines = ['(' + $('quoteTime').value.replace(':', ' : ') + ' TP)', '', '   - USD -', ''];
+    const rules = readQuoteRules();
+    const marLine = renderMarLine();
+    const lateLine = renderLateMarLine();
+    const topMar = [], bottomMar = [];
+    if (marLine) {
+        if (/^늦은 마/.test(marLine))
+            bottomMar.push(marLine);
+        else
+            topMar.push(marLine);
+    }
+    if (lateLine)
+        bottomMar.push(lateLine);
+    if (topMar.length)
+        lines.push(...topMar, '');
+    const special = [];
+    // Nonstandard value-date messages are entered in their own input; never confuse with maturity VALUE dates.
+    const nonstandard = $('nonstandardPaste').value.trim();
+    const separate = nonstandard ? nonstandard.split(/\r?\n/).map(s => s.split('\t').map(x => x.trim())) : [];
+    const combined = [...embeddedNonstandard.map(r => r.map(c => c.text)), ...separate];
+    if (combined.length) {
+        const parsed = parseNonstandardRows(combined);
+        special.push(...parsed.lines);
+        $('nonstandardStatus').textContent = parsed.errors.length ? '확인 필요: ' + parsed.errors.join(', ') : parsed.lines.length + '개 비표준일물 거래를 날짜순으로 정리했습니다.';
+    }
+    else
+        $('nonstandardStatus').textContent = '비표준일물 시트를 붙여넣거나 스왑 시트에 섞어 넣으세요.';
+    for (const ten of [...new Set(quotes.map(q => q.tenor))].filter(t => t.includes('*') || !['O/N', 'T/N', 'S/N', '1W', '2W', '1M', '2M', '3M', '6M', '9M', '1Y', '내일마'].includes(t.replace(/\[.*$/, '')))) {
+        const b = selected.get(ten + '|bid'), o = selected.get(ten + '|offer');
+        if (!b && !o)
+            continue;
+        const bs = b?.size || '', os = o?.size || '';
+        const note = bs && os ? ' (' + bs + '/' + os + ')' : bs ? ' (bid ' + bs + ')' : os ? ' (ofr ' + os + ')' : '';
+        special.push((/^\d+\*\d+$/.test(ten) ? 'df ' : '') + ten.toLowerCase() + '  ' + (b ? fmt(b.price) : '?') + ' / ' + (o ? fmt(o.price) : '?') + note);
+    }
+    const ordinary = [...new Set(quotes.map(q => q.tenor))].filter(t => ['O/N', 'T/N', 'S/N', '1W', '2W', '1M', '2M', '3M', '6M', '9M', '1Y'].includes(t.replace(/\[.*$/, '')));
+    const order = ['O/N', 'T/N', 'S/N', '1W', '2W', '1M', '2M', '3M', '6M', '9M', '1Y'];
+    ordinary.sort((a, b) => order.indexOf(a.replace(/\[.*$/, '')) - order.indexOf(b.replace(/\[.*$/, '')));
+    const standardLines = [];
+    for (const ten of ordinary) {
+        const b = selected.get(ten + '|bid'), o = selected.get(ten + '|offer');
+        if (!b && !o)
+            continue;
+        const rule = rules[ten] || {};
+        // Old manual overrides must not invent small size on a regular quote.
+        const bs = b?.size || '', os = o?.size || '';
+        let note = '';
+        if (bs === 's' && os === 's')
+            note = ' (s/s)';
+        else if (bs === 's' && os && os !== 's')
+            note = ' (s/' + os + ')';
+        else if (os === 's' && bs && bs !== 's')
+            note = ' (' + bs + '/s)';
+        else if (bs === 's')
+            note = ' (bid s)';
+        else if (os === 's')
+            note = ' (ofr s)';
+        else if (bs.startsWith('s+') && os)
+            note = ' (' + bs + '/' + (os || '') + ')';
+        else if (os.startsWith('s+') && bs)
+            note = ' (' + bs + '/' + os + ')';
+        else if (bs.startsWith('s+'))
+            note = ' (bid ' + bs + ')';
+        else if (os.startsWith('s+'))
+            note = ' (ofr ' + os + ')';
+        else if (bs && os)
+            note = ' (' + bs + '/' + os + ')';
+        else if (bs && bs !== 's' && !os)
+            note = ' (bid ' + bs + ')';
+        else if (os && os !== 's' && !bs)
+            note = ' (ofr ' + os + ')';
+        if (ten.startsWith('T/N')) {
+            const small = (v) => v === 's' || v.startsWith('s+') || (v !== '' && Number(v) < regularSize(ten));
+            if (small(bs) && small(os))
+                note = ' (' + bs + '/' + os + ')';
+            else if (small(bs))
+                note = ' (bid ' + bs + ')';
+            else if (small(os))
+                note = ' (ofr ' + os + ')';
+            else
+                note = '';
+        }
+        standardLines.push(ten.toLowerCase().padEnd(6) + ' ' + (b ? (b.price === 0 ? 'par' : fmt(b.price)) : '?') + ' / ' + (o ? (o.price === 0 ? 'par' : fmt(o.price)) : '?') + note);
+    }
+    // Chronological ordering by the START of each swap period, not by input order.
+    // 2W*1M starts at 2 weeks; 2*3 DF starts at 2 months.
+    const tenorStartDays = (line) => {
+        const t = line.trim().toUpperCase().replace(/^DF\s+/, '').split(/\s+/)[0];
+        const short = { 'O/N': 0, 'T/N': 1, 'S/N': 2 };
+        if (t in short)
+            return short[t];
+        if (/^\d{1,2}\/\d{1,2}/.test(t))
+            return 0.5;
+        const part = t.split('*')[0];
+        const m = part.match(/^(\d+)([DWMY])?$/);
+        if (!m)
+            return 999999;
+        const n = Number(m[1]);
+        return n * ({ D: 1, W: 7, M: 30, Y: 365 }[m[2] || 'M']);
+    };
+    special.sort((a, b) => tenorStartDays(a) - tenorStartDays(b));
+    if (special.length)
+        lines.push(...special, '');
+    if (standardLines.length)
+        lines.push(...standardLines, '');
+    if (bottomMar.length)
+        lines.push('', ...bottomMar);
+    $('quoteOutput').textContent = lines.length > 4 ? applyFixes(lines.join('\n')) : '분석 가능한 호가가 없습니다.';
+}
+// v5 intentionally does not import old global tenor overrides: prices must never leak to a new sheet.
+const fixKey = 'fx_quote_fix_scoped_v5';
+function getFixes() { try {
+    return JSON.parse(LS.getItem(fixKey) || '[]');
+}
+catch {
+    return [];
+} }
+function fixMatches(line, tenor) { return line.trim().toLowerCase().startsWith(tenor.toLowerCase() + ' ') || line.trim().toLowerCase() === tenor.toLowerCase(); }
+function applyFixes(message) {
+    const lines = message.split('\n');
+    const source = quotePasteSignature();
+    for (const f of getFixes().filter(f => !!source && f.source === source)) {
+        const i = lines.findIndex(l => fixMatches(l, f.tenor));
+        if (f.line === null) {
+            if (i >= 0)
+                lines.splice(i, 1);
+        }
+        else if (i >= 0)
+            lines[i] = f.line;
+        else
+            lines.push(f.line);
+    }
+    return lines.join('\n');
+}
+function fixSay(role, msg) {
+    const node = document.createElement('div');
+    node.className = 'fix-bubble ' + role;
+    const tag = document.createElement('strong');
+    tag.textContent = role === 'user' ? 'YOU' : 'DESK FIX';
+    const body = document.createElement('span');
+    body.textContent = msg;
+    node.append(tag, body);
+    $('fixMessages').append(node);
+    $('fixMessages').scrollTop = $('fixMessages').scrollHeight;
+}
+function saveFixRule(tenor, line) {
+    const source = quotePasteSignature();
+    if (!source)
+        return;
+    const list = getFixes().filter(x => !(x.source === source && x.tenor.toLowerCase() === tenor.toLowerCase()));
+    list.push({ tenor, line, source });
+    LS.setItem(fixKey, JSON.stringify(list.slice(-300)));
+    $('fixSaved').textContent = list.length + '개 수정 규칙 저장';
+}
+function sendFix() {
+    const input = $('fixInput'), feedback = input.value.trim();
+    if (!feedback)
+        return;
+    input.value = '';
+    fixSay('user', feedback);
+    const before = $('quoteOutput').innerText || $('quoteOutput').textContent || '';
+    if (/^(?:되돌리기|undo)$/i.test(feedback)) {
+        const prev = SS.getItem('fx_fix_previous');
+        if (prev !== null) {
+            $('quoteOutput').textContent = prev;
+            SS.removeItem('fx_fix_previous');
+            fixSay('assistant', '직전 메시지로 되돌렸어요.');
+        }
+        return;
+    }
+    if (/^(?:규칙 초기화|수정 규칙 초기화)$/.test(feedback)) {
+        LS.removeItem(fixKey);
+        $('fixSaved').textContent = '0개 수정 규칙 저장';
+        fixSay('assistant', '저장된 수정 규칙을 초기화했어요.');
+        return;
+    }
+    const lines = before.split('\n');
+    let changed = 0;
+    const validTenor = /^(?:df\s+)?(?:\d+\*\d+|\d+[mwy]|[ots]\/n(?:\[\d+d?\])?|내일 마|늦은 마|월요일 마|spot mar|\d{1,2}\/\d{1,2}[^ ]* val on,off)$/i;
+    const identify = (line) => line.trim().match(/^((?:df\s+)?(?:\d+\*\d+|\d+[mwy]|[ots]\/n(?:\[\d+d?\])?|내일 마|늦은 마|월요일 마|spot mar|\d{1,2}\/\d{1,2}[^ ]* val on,off))(?=\s|$)/i)?.[1] || '';
+    const normalize = (t) => t.trim().toLowerCase().replace(/^df\s+/, '');
+    const quote = /^([+-]?(?:\d+(?:\.\d+)?|par)|\?)\s*\/\s*([+-]?(?:\d+(?:\.\d+)?|par)|\?)(?:\s*\((s\/s|bid\s+(?:s|\d+(?:\.\d+)?)|ofr\s+(?:s|\d+(?:\.\d+)?)|(?:s|\d+(?:\.\d+)?)\s*\/\s*(?:s|\d+(?:\.\d+)?))\))?/i;
+    for (const raw of feedback.split(/\r?\n/).map(x => x.trim()).filter(Boolean)) {
+        const deletion = raw.match(/^(.+?)\s*(?:줄\s*)?(?:삭제|지워줘|빼줘)$/);
+        if (deletion) {
+            const t = normalize(deletion[1]);
+            const i = lines.findIndex(l => normalize(identify(l)) === t);
+            if (i >= 0) {
+                lines.splice(i, 1);
+                saveFixRule(identify(before.split('\n').find(l => normalize(identify(l)) === t) || '') || deletion[1], null);
+                changed++;
+            }
+            continue;
+        }
+        const ten = identify(raw.replace(/^(?:정답은|이렇게|다음과 같이|수정:)\s*/, ''));
+        if (!ten || !validTenor.test(ten))
+            continue;
+        const rest = raw.slice(raw.toLowerCase().indexOf(ten.toLowerCase()) + ten.length).trim().replace(/^(?:은|는|을|를|:|=|→|->)\s*/, '');
+        const match = rest.match(quote);
+        if (!match)
+            continue;
+        const canonical = (ten.match(/^\d+\*\d+$/) ? 'df ' : '') + ten;
+        const corrected = canonical + '  ' + match[1] + ' / ' + match[2] + (match[3] ? ' (' + match[3] + ')' : '');
+        const i = lines.findIndex(l => normalize(identify(l)) === normalize(ten));
+        if (i >= 0)
+            lines[i] = corrected;
+        else
+            lines.push(corrected);
+        saveFixRule(ten, corrected);
+        changed++;
+    }
+    const source = quotePasteSignature();
+    const answer = lines.join('\n');
+    const saved = new Date().toLocaleString('ko-KR');
+    // Preserve both structured correction and original feedback in Correction Studio.
+    const feedbackList = JSON.parse(LS.getItem('fx_quote_feedback_v1') || '[]');
+    feedbackList.push(feedback);
+    LS.setItem('fx_quote_feedback_v1', JSON.stringify(feedbackList.slice(-100)));
+    if (changed) {
+        SS.setItem('fx_fix_previous', before);
+        $('quoteOutput').textContent = answer;
+        if (source) {
+            const examples = trainingExamples().filter(x => x.source !== source);
+            examples.unshift({ source, answer, saved });
+            LS.setItem('fx_quote_examples_v1', JSON.stringify(examples.slice(0, 30)));
+            renderTrainingExamples();
+            const sheet = $('exampleSheet'), expected = $('exampleAnswer');
+            sheet.textContent = $('paste').innerText || $('paste').textContent || '';
+            expected.textContent = answer;
+        }
+        fixSay('assistant', changed + '개 호가를 현재 시트에서 수정했어요. 새 시트에는 이 가격을 고정 적용하지 않습니다. 3번 탭에 정답 예시를 저장했지만, 새로운 일반 규칙을 자동 학습하는 기능은 아직 없습니다.');
+    }
+    else {
+        fixSay('assistant', '피드백을 기록했지만 자동 수정 가능한 형식이 아니에요. 이 챗봇은 아직 자유로운 설명에서 프로그램 규칙을 스스로 수정하지 못합니다. 현재 시트의 호가를 고치려면 ‘t/n -3.5 / ? 로 고쳐줘’처럼 입력해 주세요.');
+    }
+}
+$('fixSend').addEventListener('click', sendFix);
+$('fixInput').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendFix();
+} });
+$('fixSaved').textContent = getFixes().length + '개 수정 규칙 저장';
+fixSay('assistant', '틀린 호가를 알려주세요. 예: 2m ? / -225 (ofr s)로 고쳐줘');
+function readQuoteRules() {
+    try {
+        return JSON.parse(LS.getItem('fx_quote_rules_v1') || '{}');
+    }
+    catch {
+        return {};
+    }
+}
+function saveQuoteRules(r) {
+    LS.setItem('fx_quote_rules_v1', JSON.stringify(r));
+}
+function renderRuleList() {
+    const rules = readQuoteRules();
+    $('ruleList').innerHTML = Object.keys(rules).length ? Object.entries(rules).map(([ten, r]) => '<div class="rule-entry"><strong>' + esc(ten) + '</strong> · Bid ' + esc(r.bidSize || '자동') + ' / Offer ' + esc(r.offerSize || '자동') + ' <button data-rule-delete="' + esc(ten) + '">삭제</button></div>').join('') : '저장된 수정 규칙이 없습니다.';
+}
+/* retired overrides
+$('saveRule').addEventListener('click',()=>{
+ const ten=($('ruleTenor') as HTMLSelectElement).value;
+ const bid=($('ruleBid') as HTMLInputElement).value.trim().toLowerCase();
+ const offer=($('ruleOffer') as HTMLInputElement).value.trim().toLowerCase();
+ if(!ten||(!bid&&!offer)){toast('테너와 수정할 수량을 입력하세요');return}
+ if(![bid,offer].every(v=>!v||v==='s'||/^\d+(?:\.\d+)?$/.test(v))){toast('수량은 s 또는 숫자로 입력하세요');return}
+ const rules=readQuoteRules();
+ rules[ten]={bidSize:bid||undefined,offerSize:offer||undefined};
+ saveQuoteRules(rules);renderRuleList();renderQuotes();
+ $('ruleStatus').textContent=ten+' 수정 규칙을 이 브라우저에 저장했습니다. Quote Board 메시지에 즉시 적용됩니다.';
+});
+$('ruleList').addEventListener('click',e=>{
+ const target=(e.target as HTMLElement).closest<HTMLButtonElement>('[data-rule-delete]');
+ if(!target)return;
+ const rules=readQuoteRules();delete rules[target.dataset.ruleDelete||''];saveQuoteRules(rules);renderRuleList();renderQuotes();
+});
+renderRuleList();
+*/
+$('quoteRows').addEventListener('change', e => {
+    const t = e.target;
+    if (t.dataset.bad) {
+        const q = quotes.find(x => x.id === Number(t.dataset.bad));
+        if (q)
+            q.bad = t.checked;
+        renderQuotes();
+    }
+});
+$('parse').addEventListener('click', () => {
+    setKoreanQuoteTime();
+    quotes = parseRows();
+    renderQuotes();
+    $('parseStatus').textContent =
+        quotes.length +
+            '개 호가를 추출했습니다. 테너와 취소선 여부를 반드시 검토하세요.';
+});
+$('hideBad').addEventListener('change', renderQuotes);
+$('nonstandardPaste').addEventListener('input', renderQuotes);
+function setKoreanQuoteTime() { const now = new Date(), parts = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Seoul', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(now); $('quoteTime').value = parts; $('quoteTimeDisplay').textContent = parts + ' KST'; }
+setKoreanQuoteTime();
+$('quoteTime').addEventListener('change', renderQuotes);
+$('clearPaste').addEventListener('click', () => {
+    $('paste').innerHTML = '';
+    quotes = [];
+    renderQuotes();
+    $('parseStatus').textContent = '초기화했습니다.';
+});
+$('demo').addEventListener('click', () => {
+    $('paste').innerHTML =
+        '<table><tr><td>1M</td><td>왕농</td><td>-120</td><td></td><td>-80</td><td>왕농</td></tr><tr><td></td><td>왕s 신월50</td><td>-105</td><td></td><td>-90</td><td>왕s 벤홍50</td></tr><tr><td></td><td><s>왕s bad50</s></td><td><s>-95</s></td><td></td><td></td><td></td></tr><tr><td>T/N</td><td>국주50</td><td>-4</td><td></td><td></td><td></td></tr></table>';
+    $('parse').click();
+});
+async function copy(id) {
+    try {
+        await navigator.clipboard.writeText($(id).innerText || $(id).textContent || '');
+        toast('클립보드에 복사했어요');
+    }
+    catch {
+        try {
+            const r = document.createRange();
+            r.selectNodeContents($(id));
+            const s = getSelection();
+            s.removeAllRanges();
+            s.addRange(r);
+            toast(document.execCommand('copy') ? '클립보드에 복사했어요' : '메시지를 선택했어요. 길게 눌러 복사하세요');
+        }
+        catch {
+            toast('메시지를 길게 눌러 직접 복사해 주세요');
+        }
+    }
+}
+$('copyQuote').addEventListener('click', () => void copy('quoteOutput'));
+const value = (id) => ($(id).value || '').trim();
+const md = (s) => {
+    const [y, m, d] = s.split('-');
+    return m.replace(/^0/, '') + '/' + d.replace(/^0/, '');
+};
+function makeTicket(e) {
+    e?.preventDefault();
+    const form = $('ticketForm');
+    if (!form.reportValidity())
+        return;
+    const start = value('tStart'), end = value('tEnd'), near = Number(value('tNear')), far = Number(value('tFar')), point = Number(value('tPoint')), amount = Number(value('tAmount')), fee = Number(value('tFee')), oppositeFee = Number(value('tOppositeFee'));
+    if (start >= end) {
+        $('ticketStatus').textContent = '시작일이 종료일보다 빨라야 합니다.';
+        return;
+    }
+    if (amount <= 0 || fee < 0 || oppositeFee < 0) {
+        $('ticketStatus').textContent = '수량과 수수료를 확인해 주세요.';
+        return;
+    }
+    const delta = (far - near) * 100;
+    const warning = Math.abs(delta - point) > 0.015
+        ? '주의: (Far−Near)×100 = ' +
+            delta.toFixed(2) +
+            '전으로 입력 Swap Point ' +
+            point +
+            '전과 다릅니다. 단위를 확인하세요.'
+        : '환율 차이와 스왑포인트가 일치합니다 (1전 = 0.01원 가정).';
+    $('ticketStatus').textContent = warning;
+    const header = value('tTenor') + ' (' + md(start) + '~' + md(end) + ', @' + value('tPoint') + ') ';
+    const instA = value('tA').toUpperCase(), instB = value('tB').toUpperCase();
+    const side = value('tSide').toUpperCase(), opposite = side === 'S/B' ? 'B/S' : 'S/B';
+    const nearText = value('tNear').trim(), farText = value('tFar').trim();
+    const build = (who, action, other, sideFee, currency) => header + who + ' ' + action + ' USD ' + amount + ' MIO WITH ' + other + ' AT ' + nearText + ' N ' + farText + '\n\nFEE ' + sideFee.toLocaleString('en-US') + ' ' + (currency === 'USD' ? 'USD' : 'WON');
+    ticketText = build(instA, side, instB, fee, value('tFeeCurrency'));
+    $('ticketOutput').textContent = ticketText;
+    $('ticketOutputOpposite').textContent = build(instB, opposite, instA, oppositeFee, value('tOppositeFeeCurrency'));
+    ticketData = {
+        tenor: value('tTenor'),
+        start,
+        end,
+        point: value('tPoint'),
+        institution: value('tA'),
+        counterparty: value('tB'),
+        side: value('tSide'),
+        amount: String(amount),
+        near: String(near),
+        far: String(far),
+        fee: String(fee),
+        oppositeFee: String(oppositeFee),
+        message: ticketText,
+    };
+}
+function parseTradeDate(raw) {
+    const s = raw.trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(s))
+        return s;
+    const m = s.match(/^(\d{1,2})[-\/ ]([A-Za-z]{3}|\d{1,2})[-\/ ](\d{4})$/);
+    if (!m)
+        return '';
+    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    const month = /^\d+$/.test(m[2]) ? Number(m[2]) : months.indexOf(m[2].toUpperCase()) + 1;
+    if (month < 1 || month > 12 || Number(m[1]) < 1 || Number(m[1]) > 31)
+        return '';
+    const date = m[3] + '-' + String(month).padStart(2, '0') + '-' + m[1].padStart(2, '0');
+    const d = new Date(date + 'T12:00:00');
+    return Number.isNaN(d.getTime()) || d.getUTCDate() !== Number(m[1]) ? '' : date;
+}
+function oldPastedTicketCells() {
+    const root = $('ticketPaste');
+    const table = root.querySelector('table');
+    if (table) {
+        const row = table.querySelector('tr');
+        if (row)
+            return Array.from(row.children).flatMap(el => Array.from({ length: Math.max(1, Number(el.getAttribute('colspan') || 1)) }, (_, i) => i === 0 ? (el.textContent || '').trim() : ''));
+    }
+    const text = root.innerText || root.textContent || '';
+    return text.split(/\r?\n/).find(line => line.includes('\t'))?.split('\t').map(s => s.trim()) || text.split(/\t/).map(s => s.trim());
+}
+function oldFillTicketFromSheet() {
+    const c = pastedTicketCells();
+    $('ticketStages').style.display = 'none';
+    ticketText = '';
+    if (c.length < 17) {
+        $('ticketParseStatus').textContent = '열이 부족합니다. 셀 하나가 아니라 거래 행 전체를 복사해 주세요. (' + c.length + '열 감지)';
+        return;
+    }
+    const tenor = norm(c[2]) || c[2].toUpperCase(), point = parsePrice(c[5]), amount = parsePrice(c[6]), near = parsePrice(c[7]), far = parsePrice(c[8]);
+    const start = parseTradeDate(c[15]), end = parseTradeDate(c[16]);
+    const fee = parsePrice(c[12]) ?? parsePrice(c[19] || '');
+    if (!['TN', 'ON', 'SN', '1W', '1M', '2M', '3M', '6M', '9M', '1Y'].includes(tenor) || !c[3] || !c[4] || point === null || amount === null || amount <= 0 || near === null || far === null || fee === null || fee < 0 || !start || !end) {
+        $('ticketParseStatus').textContent = '필수 열을 읽지 못했습니다. 테너(C), 기관(D/E), 포인트(F), 수량(G), 환율(H/I), 수수료(M), 날짜(P/Q)를 확인해 주세요.';
+        return;
+    }
+    const mapping = { tTenor: tenor, tPoint: String(point), tA: c[3].replace(/^\*/, '').trim(), tB: c[4].replace(/^\*/, '').trim(), tAmount: String(amount), tNear: String(near), tFar: String(far), tFee: String(fee), tOppositeFee: String(parsePrice(c[14]) ?? fee), tStart: start, tEnd: end };
+    for (const [id, v] of Object.entries(mapping))
+        $(id).value = v;
+    ticketText = '';
+    $('ticketParseStatus').textContent = 'STEP 1 완료: ' + c.length + '개 열에서 거래 정보를 추출했습니다. STEP 2에서 S/B 방향과 기관, 수수료를 확인하세요. 수정 시 STEP 3 메시지가 즉시 갱신됩니다.';
+    $('ticketStages').style.display = 'grid';
+    makeTicket();
+}
+function pastedTicketCells() {
+    const root = $('ticketPaste'), table = root.querySelector('table');
+    if (table) {
+        const row = table.querySelector('tr');
+        if (row)
+            return Array.from(row.children).flatMap(el => Array.from({ length: Math.max(1, Number(el.getAttribute('colspan') || 1)) }, (_, i) => i === 0 ? (el.textContent || '').trim() : ''));
+    }
+    const raw = (root.innerText || root.textContent || ''), first = raw.split(/\r?\n/).find(x => x.trim()) || '';
+    if (first.includes('\t'))
+        return first.split('\t').map(x => x.trim());
+    if (first.startsWith('|'))
+        return first.replace(/^\|/, '').replace(/\|$/, '').split('|').map(x => x.trim());
+    return first.split(/\s{2,}/).map(x => x.trim());
+}
+function fillTicketFromSheet() {
+    const cells = pastedTicketCells();
+    $('ticketStages').style.display = 'none';
+    ticketText = '';
+    if (!cells.some(x => x.trim())) {
+        $('ticketParseStatus').textContent = '거래 행을 붙여넣어 주세요.';
+        return;
+    }
+    // Locate the row using its column layout, never the tenor text.
+    const ratePair = (i) => { const v = parsePrice(cells[i] || ''), n = parsePrice(cells[i+1] || ''); return v !== null && n !== null && v > 100 && v < 3000 && n > 100 && n < 3000 && Math.abs(v-n) < 20; };
+    const candidates = cells.map((_, i) => i - 15).filter(o => parseTradeDate(cells[o+15] || '') && parseTradeDate(cells[o+16] || '') && ratePair(o+7));
+    const rates = cells.map((_, i) => i - 7).filter(o => ratePair(o+7) && parsePrice(cells[o+6] || '') > 0 && cells[o+3] && cells[o+4]);
+    let offset = candidates.length === 1 ? candidates[0] : candidates.length === 0 && rates.length === 1 ? rates[0] : null;
+    if (offset === null) {
+        $('ticketParseStatus').textContent = '거래 열 위치를 확정할 수 없습니다. A~Q 거래 행 전체를 복사해 주세요.';
+        return;
+    }
+    const c = (i) => cells[i + offset] || '';
+    const tenor = c(2);
+    const point = parsePrice(c(5)), amount = parsePrice(c(6)), near = parsePrice(c(7)), far = parsePrice(c(8));
+    const start = parseTradeDate(c(15)), end = parseTradeDate(c(16));
+    const sbFee = parsePrice(c(12)), bsFee = parsePrice(c(14));
+    const side = value('tSide').toUpperCase(), fee = side === 'B/S' ? bsFee : sbFee, oppositeFee = side === 'B/S' ? sbFee : bsFee;
+    const aName = c(3).replace(/^\*/, '').trim(), bName = c(4).replace(/^\*/, '').trim();
+    const currencyFor = (name, v) => /\bSSBT\b|STATE\s*STREET|스테이트스트리트/i.test(name) ? 'USD' : v !== null && v > 0 && v < 10000 ? 'USD' : 'KRW';
+    const mapping = { tTenor: tenor, tPoint: point === null ? '' : String(point), tA: aName, tB: bName, tAmount: amount === null ? '' : String(amount), tNear: near === null ? '' : c(7).trim().replace(/,/g, ''), tFar: far === null ? '' : c(8).trim().replace(/,/g, ''), tFee: fee === null ? '' : String(fee), tOppositeFee: oppositeFee === null ? '' : String(oppositeFee), tFeeCurrency: currencyFor(aName, fee), tOppositeFeeCurrency: currencyFor(bName, oppositeFee), tStart: start, tEnd: end };
+    for (const [id, v] of Object.entries(mapping))
+        $(id).value = v;
+    if (value('tB').toUpperCase() === 'KB')
+        $('tB').value = 'KOOKMIN';
+    $('ticketStages').style.display = 'grid';
+    const missing = [];
+    if (!tenor.trim())
+        missing.push('테너');
+    if (!aName || !bName)
+        missing.push('기관명');
+    if (point === null)
+        missing.push('스왑포인트');
+    if (amount === null || amount <= 0)
+        missing.push('수량');
+    if (near === null || far === null)
+        missing.push('환율');
+    if (sbFee === null || sbFee < 0)
+        missing.push('S/B 수수료');
+    if (bsFee === null || bsFee < 0)
+        missing.push('B/S 수수료');
+    if (!start || !end)
+        missing.push('결제일');
+    if (missing.length) {
+        $('ticketOutput').textContent = '확인이 필요한 항목을 입력하면 메시지가 생성됩니다.';
+        $('ticketOutputOpposite').textContent = '확인이 필요한 항목을 입력하면 반대편 메시지가 생성됩니다.';
+        $('ticketParseStatus').textContent = '일부 추출 완료 (' + cells.length + '칸, 시작 열 자동 인식) · 확인 필요: ' + missing.join(', ') + '. 아래에서 수정해 주세요.';
+    }
+    else {
+        $('ticketParseStatus').textContent = '자동 추출 완료 (' + cells.length + '칸, 시작 열 자동 인식). 기관별 방향·수수료 통화를 확인하세요.';
+        makeTicket();
+    }
+}
+$('parseTicket').addEventListener('click', fillTicketFromSheet);
+$('ticketPaste').addEventListener('paste', (event) => { const raw = event.clipboardData?.getData('text/plain'); if (raw) {
+    event.preventDefault();
+    $('ticketPaste').textContent = raw;
+    fillTicketFromSheet();
+}
+else
+    setTimeout(fillTicketFromSheet, 50); });
+$('ticketPaste').addEventListener('input', () => { if (($('ticketPaste').innerText || '').includes('\t'))
+    fillTicketFromSheet(); });
+$('ticketDemo').addEventListener('click', () => {
+    $('ticketPaste').textContent = ['20', '엔투원/*국주', 'tn', 'NHIS', '*KB', '-3', '100', '1336.20', '1336.170', '1117', '1109', '1,500.0', '150,000', '0.0', '0', '17-Nov-2026', '18-Nov-2026', '', '', '150,000', '0'].join('\t');
+    fillTicketFromSheet();
+});
+$('clearTicketPaste').addEventListener('click', () => { $('ticketPaste').innerHTML = ''; $('ticketStages').style.display = 'none'; ticketText = ''; $('ticketParseStatus').textContent = 'STEP 1: 거래 한 행을 붙여넣어 주세요.'; });
+$('ticketForm').addEventListener('submit', makeTicket);
+$('ticketForm').addEventListener('input', () => { if ($('ticketStages').style.display !== 'none')
+    makeTicket(); });
+$('ticketForm').addEventListener('change', () => { if ($('ticketStages').style.display !== 'none')
+    makeTicket(); });
+$('copyTicket').addEventListener('click', () => void copy('ticketOutput'));
+$('copyTicketOpposite').addEventListener('click', () => void copy('ticketOutputOpposite'));
+$('resetTicket').addEventListener('click', () => {
+    for (const [id, v] of Object.entries({
+        tTenor: 'TN',
+        tPoint: '-3',
+        tA: 'NHIS',
+        tB: 'KOOKMIN',
+        tSide: 'S/B',
+        tAmount: '100',
+        tNear: '1336.20',
+        tFar: '1336.17',
+        tFee: '150000',
+        tOppositeFee: '150000',
+        tFeeCurrency: 'KRW',
+        tOppositeFeeCurrency: 'KRW',
+    }))
+        $(id).value = v;
+    ticketText = '';
+    $('ticketOutput').textContent = '체결 정보를 입력한 뒤 메시지를 생성하세요.';
+});
+function normalizeTraining(s) { return s.replace(/\r/g, '').trim().replace(/[ \t]+/g, ' ').replace(/\n+/g, '\n'); }
+function trainingExamples() { try {
+    return JSON.parse(LS.getItem('fx_quote_examples_v1') || '[]');
+}
+catch {
+    return [];
+} }
+function quotePasteSignature() { return normalizeTraining($('paste').innerText || $('paste').textContent || ''); }
+function renderTrainingExamples() {
+    const data = trainingExamples();
+    $('exampleList').innerHTML = '';
+}
+$('saveExample').addEventListener('click', () => {
+    const source = normalizeTraining(sheetEditorText($('exampleSheet')));
+    const answer = ($('exampleAnswer').innerText || $('exampleAnswer').textContent || '').trim();
+    if (!source || !answer) {
+        $('exampleStatus').textContent = '왼쪽 시트와 오른쪽 정답 메시지를 모두 입력하세요.';
+        return;
+    }
+    const list = trainingExamples().filter(x => x.source !== source);
+    list.unshift({ source, answer, saved: new Date().toLocaleString('ko-KR') });
+    LS.setItem('fx_quote_examples_v1', JSON.stringify(list.slice(0, 30)));
+    $('exampleStatus').textContent = '저장 완료. 동일한 시트를 Quote Board에 붙여넣으면 정답 메시지를 우선 사용합니다.';
+    const existing = readManual();
+    for (const rule of inferManual(source, answer)) {
+        if (!existing.some(x => x.id === rule.id))
+            existing.push(rule);
+    }
+    writeManual(existing);
+    renderManual();
+    renderTrainingExamples();
+    renderQuotes();
+});
+$('exampleList').addEventListener('click', e => {
+    const button = e.target.closest('[data-example-delete]');
+    if (!button)
+        return;
+    const list = trainingExamples();
+    list.splice(Number(button.dataset.exampleDelete), 1);
+    LS.setItem('fx_quote_examples_v1', JSON.stringify(list));
+    renderTrainingExamples();
+    renderQuotes();
+});
+renderTrainingExamples();
+const defaultManual = [{ id: 'nonstandard-order', category: '메시지 순서', title: '비표준일물 우선 배치', detail: '비표준일물 거래는 (날짜) val on/off 형식으로 표기하고 표준일물 거래보다 위에 배치', enabled: false }];
+function readManual() { try {
+    const raw = JSON.parse(LS.getItem('fx_manual_v1') || 'null');
+    return Array.isArray(raw) ? raw : defaultManual;
+}
+catch {
+    return defaultManual;
+} }
+function writeManual(v) { LS.setItem('fx_manual_v1', JSON.stringify(v)); }
+function inferManual(source, answer) {
+    const rules = [];
+    const lines = answer.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+    if (lines.some(s => /\bval\s+(?:on|off)\b/i.test(s)))
+        rules.push({ id: 'nonstandard-order', category: '메시지 순서', title: '비표준일물 우선 배치', detail: '(날짜) val on/off 형식을 사용하고 표준일물보다 위에 배치', enabled: false });
+    if (lines.some(s => /\(bid s\)/i.test(s)))
+        rules.push({ id: 'bid-small', category: '수량 표기', title: 'Bid만 Small일 때', detail: 'Bid만 small이면 (bid s)로 표시', enabled: false });
+    if (lines.some(s => /\(ofr s\)/i.test(s)))
+        rules.push({ id: 'offer-small', category: '수량 표기', title: 'Offer만 Small일 때', detail: 'Offer만 small이면 (ofr s)로 표시', enabled: false });
+    if (lines.some(s => /\(s\/s\)/i.test(s)))
+        rules.push({ id: 'both-small', category: '수량 표기', title: '양쪽 모두 Small일 때', detail: 'Bid와 Offer 모두 small이면 (s/s)로 표시', enabled: false });
+    if (lines.some(s => /\b\d+\/\d+\b/.test(s)))
+        rules.push({ id: 'quantity-pair', category: '수량 표기', title: 'Bid/Offer 수량 표기', detail: 'Bid 수량/Offer 수량 순서로 괄호 안에 표시', enabled: false });
+    return rules;
+}
+function renderManual() {
+    const rules = readManual();
+    $('manualCount').textContent = rules.length + '개 매뉴얼 · 제안 규칙은 검토 후 승인';
+    $('manualList').innerHTML = rules.map((r, i) => '<article class="manual-card"><div class="flex"><span class="muted">' + esc(r.category) + ' · ' + (r.enabled ? '승인됨' : '검토 필요') + '</span><div><button data-manual-toggle="' + i + '">' + (r.enabled ? '승인 취소' : '규칙 승인') + '</button><button data-manual-delete="' + i + '">삭제</button></div></div><strong>' + esc(r.title) + '</strong><p>' + esc(r.detail) + '</p></article>').join('');
+}
+$('manualList').addEventListener('click', e => {
+    const button = e.target.closest('button');
+    if (!button)
+        return;
+    const rules = readManual();
+    if (button.dataset.manualToggle !== undefined) {
+        const r = rules[Number(button.dataset.manualToggle)];
+        if (r)
+            r.enabled = !r.enabled;
+    }
+    if (button.dataset.manualDelete !== undefined)
+        rules.splice(Number(button.dataset.manualDelete), 1);
+    writeManual(rules);
+    renderManual();
+});
+$('addManual').addEventListener('click', () => {
+    const category = $('manualCategory').value, title = $('manualTitle').value.trim(), detail = $('manualDetail').value.trim();
+    if (!title || !detail) {
+        toast('제목과 내용을 입력해 주세요');
+        return;
+    }
+    const rules = readManual();
+    rules.push({ id: 'custom-' + Date.now(), category, title, detail, enabled: true });
+    writeManual(rules);
+    renderManual();
+    $('manualTitle').value = '';
+    $('manualDetail').value = '';
+});
+function sheetEditorText(root) { const table = root.querySelector('table'); if (table)
+    return Array.from(table.querySelectorAll('tr')).map(tr => Array.from(tr.querySelectorAll('td,th')).map(c => (c.textContent || '').trim()).join('\t')).join('\n'); return root.innerText || root.textContent || ''; }
+function pasteSheetRich(e) {
+    const html = e.clipboardData?.getData('text/html') || '', plain = e.clipboardData?.getData('text/plain') || '';
+    if (!html && !plain)
+        return;
+    e.preventDefault();
+    const root = $('exampleSheet');
+    if (html && /<table[\s>]/i.test(html)) {
+        const doc = new DOMParser().parseFromString(html, 'text/html'), table = doc.querySelector('table');
+        if (table) {
+            table.querySelectorAll('script,style,iframe,object,svg,img,a').forEach(n => n.remove());
+            table.querySelectorAll('*').forEach(n => { for (const attr of Array.from(n.attributes))
+                if (attr.name.startsWith('on') || !['colspan', 'rowspan', 'style'].includes(attr.name))
+                    n.removeAttribute(attr.name); if (n.hasAttribute('style')) {
+                const style = n.getAttribute('style') || '';
+                n.setAttribute('style', /line-through/i.test(style) ? 'text-decoration:line-through' : '');
+            } });
+            root.innerHTML = '';
+            root.appendChild(table);
+            return;
+        }
+    }
+    root.textContent = plain;
+}
+// Match Quote Board native Google Sheets HTML paste behavior exactly.
+// Preserve rich clipboard tables rather than replacing them with plain text.
+renderManual();
+const today = new Date();
+const date = new Date(today.getTime() + 86400000);
+const iso = (d) => d.toISOString().slice(0, 10);
+$('tStart').value = iso(today);
+$('tEnd').value = iso(date);
+
+</script>
+  </body>
+</html>
